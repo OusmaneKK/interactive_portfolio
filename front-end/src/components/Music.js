@@ -2,7 +2,7 @@
 import React from 'react'
 
 
-export default function MusicCard(props) {
+export default function Music(props) {
   const { image, title, description, genre, mp3File } = props.music
 
   return (
