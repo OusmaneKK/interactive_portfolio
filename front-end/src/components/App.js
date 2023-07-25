@@ -10,6 +10,7 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import Login from './Login'
 import Home from './Home'
+import About from './About'
 
 const isLogged = false
 
@@ -24,6 +25,7 @@ function App() {
           ) : (
             <Route path="/" element={<Navigate to="/register" />} />
           )}
+          <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
