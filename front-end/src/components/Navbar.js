@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   IconButton,
   Avatar,
@@ -18,7 +18,9 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-} from '@chakra-ui/react';
+  Image,
+  LinkOverlay,
+} from '@chakra-ui/react'
 import {
   FiAward,
   FiMusic,
@@ -29,11 +31,10 @@ import {
   FiLogIn,
   FiLogOut,
   FiEdit,
-  FiUser
-} from 'react-icons/fi';
+  FiUser,
+} from 'react-icons/fi'
 
-
-import { Link } from 'react-router-dom'; // Importez la dépendance pour gérer les liens de routing
+import { Link } from 'react-router-dom'
 
 const LinkItems = [
   { name: 'About', icon: FiUser },
@@ -43,12 +44,10 @@ const LinkItems = [
   { name: 'Register', icon: FiEdit }, // si connecté l'un disparait
   { name: 'Login', icon: FiLogIn }, // si connecté l'un disparait
   { name: 'LogOut', icon: FiLogOut }, // si connecté l'un disparait
-];
+]
 
-export default function Navbar({
-  children,
-}) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function Navbar({ children }) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Box>
       <SidebarContent
@@ -62,7 +61,8 @@ export default function Navbar({
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size="full">
+        size="full"
+      >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
@@ -73,9 +73,8 @@ export default function Navbar({
         {children}
       </Box>
     </Box>
-  );
+  )
 }
-
 
 const SidebarContent = ({ onClose, ...rest }) => {
   return (
@@ -87,25 +86,41 @@ const SidebarContent = ({ onClose, ...rest }) => {
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
-      {...rest}>
+      {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Drogo Beatstore
-        </Text>
+        <LinkOverlay href='/' >
+          <Image
+            borderRadius="full"
+            boxSize="75px"
+            src="/logo.png"
+            alt="Drogo The Crow"
+            marginLeft='45px'
+            
+          />
+        </LinkOverlay>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} to={`/${link.name.toLowerCase()}`}>
-        {link.name}
+        <NavItem
+          key={link.name}
+          icon={link.icon}
+          to={`/${link.name.toLowerCase()}`}
+        >
+          {link.name}
         </NavItem>
       ))}
     </Box>
-  );
-};
+  )
+}
 
 const NavItem = ({ icon, children, to, ...rest }) => {
   return (
-    <Link to={to} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link
+      to={to}
+      style={{ textDecoration: 'none' }}
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -117,7 +132,8 @@ const NavItem = ({ icon, children, to, ...rest }) => {
           bg: 'green.400',
           color: 'white',
         }}
-        {...rest}>
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
@@ -131,14 +147,13 @@ const NavItem = ({ icon, children, to, ...rest }) => {
         {children}
       </Flex>
     </Link>
-  );
-};
-
+  )
+}
 
 const MobileNav = ({ onOpen, ...rest }) => {
   return (
     <Flex
-      ml={{ base: 0, md: 60 }} 
+      ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
@@ -146,7 +161,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
-      {...rest}>
+      {...rest}
+    >
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         onClick={onOpen}
@@ -159,7 +175,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
         display={{ base: 'flex', md: 'none' }}
         fontSize="2xl"
         fontFamily="monospace"
-        fontWeight="bold">
+        fontWeight="bold"
+      >
         Drogo Playstore
       </Text>
 
@@ -175,7 +192,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             <MenuButton
               py={2}
               transition="all 0.3s"
-              _focus={{ boxShadow: 'none' }}>
+              _focus={{ boxShadow: 'none' }}
+            >
               <HStack>
                 <Avatar
                   size={'sm'}
@@ -187,7 +205,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
                   spacing="1px"
-                  ml="2">
+                  ml="2"
+                >
                   <Text fontSize="sm">Justina Clark</Text>
                   <Text fontSize="xs" color="gray.600">
                     Admin
@@ -200,7 +219,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             </MenuButton>
             <MenuList
               bg={useColorModeValue('white', 'gray.900')}
-              borderColor={useColorModeValue('gray.200', 'gray.700')}>
+              borderColor={useColorModeValue('gray.200', 'gray.700')}
+            >
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
@@ -211,5 +231,5 @@ const MobileNav = ({ onOpen, ...rest }) => {
         </Flex>
       </HStack>
     </Flex>
-  );
-};
+  )
+}
