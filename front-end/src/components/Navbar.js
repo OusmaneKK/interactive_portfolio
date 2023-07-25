@@ -9,7 +9,6 @@ import {
   VStack,
   Icon,
   useColorModeValue,
-  Link,
   Drawer,
   DrawerContent,
   Text,
@@ -33,9 +32,12 @@ import {
   FiUser
 } from 'react-icons/fi';
 
+
+import { Link } from 'react-router-dom'; // Importez la dépendance pour gérer les liens de routing
+
 const LinkItems = [
-  { name: 'About Me', icon: FiUser },
-  { name: 'Top musics', icon: FiAward },
+  { name: 'About', icon: FiUser },
+  { name: 'MostLiked', icon: FiAward },
   { name: 'Musics', icon: FiMusic },
   { name: 'Liked', icon: FiStar },
   { name: 'Register', icon: FiEdit }, // si connecté l'un disparait
@@ -93,17 +95,17 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
-          {link.name}
+        <NavItem key={link.name} icon={link.icon} to={`/${link.name.toLowerCase()}`}>
+        {link.name}
         </NavItem>
       ))}
     </Box>
   );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, children, to, ...rest }) => {
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link to={to} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
         align="center"
         p="4"
