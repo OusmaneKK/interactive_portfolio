@@ -11,26 +11,24 @@ import Footer from './Footer'
 import Login from './Login'
 import Home from './Home'
 import About from './About'
-import Musics from './Musics'
 
-const isLogged = true
+const isLogged = false
 
 function App() {
   return (
     <>
       <Router>
         <Navbar />
-        {/* Move the Navigate component outside the Routes component */}
-        {isLogged ? (
-          <Routes>
+        <Routes>
+          {isLogged ? (
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/musics" element={<Musics />} />
-          </Routes>
-        ) : (
-          <Navigate to="/register" />
-        )}
+          ) : (
+            <Route path="/" element={<Navigate to="/register" />} />
+          )}
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
         <Footer />
       </Router>
     </>
