@@ -1,19 +1,29 @@
 version: '3'
 services:
   backend:
-    build:
-      context: ./backend
+    build: ./backend
+    env_file:
+      - ./backend/.env
     command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./backend:/app
     ports:
       - "8000:8000"
     depends_on:
-      - database
+      - db
+    environment:
+      - DEBUG=True # si vous êtes en mode développement
+    volumes:
+      - ./backend:/code  # Ici, je suppose que votre code source est dans ./backend
+      - /Users/ousmanekonate/Dev/interactive_portfolio/front-end/public:/code
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - backend
 
   frontend:
-    build:
-      context: ./front-end
+    build: ./front-end
     command: npm start
     volumes:
       - ./frontend:/app
@@ -22,12 +32,14 @@ services:
     depends_on:
       - backend
 
-  database:
+  db:
     image: postgres:latest
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .docker.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
