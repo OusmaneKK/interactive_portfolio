@@ -26,23 +26,18 @@ const [password, setPassword] = useState('');
 const navigate = useNavigate();
 const toast = useToast();
 const { handleLogin, isLogged } = useAuth(); 
+const [justLoggedIn, setJustLoggedIn] = useState(false);
 
 
 const handleLoginClick = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/token/', {
-      username: username,
-      password: password,
-    });
-
-    if (response.data.access) {
-      await handleLogin({ username, password }); // Enregistrez le token et d'autres informations nécessaires
-      navigate('/home');
-    }
+    // Appel direct à handleLogin du contexte d'authentification
+    await handleLogin({ username, password });
+    setJustLoggedIn(true); // Marquer que l'utilisateur vient de se connecter
   } catch (error) {
     toast({
       title: 'Erreur de connexion',
-      description: error.response.data.detail,
+      description: error.response?.data?.detail || 'Une erreur est survenue.',
       status: 'error',
       duration: 5000,
       isClosable: true,
@@ -51,10 +46,11 @@ const handleLoginClick = async () => {
 };
 
 useEffect(() => {
-  if (isLogged) {
-    navigate('/home');
+  if (justLoggedIn) {
+    navigate('/home', { replace: true });
+    setJustLoggedIn(false);
   }
-}, [isLogged, navigate]);
+}, [justLoggedIn, navigate]);
   return (
     <Flex
       minH={'100vh'}

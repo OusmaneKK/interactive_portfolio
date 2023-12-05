@@ -36,15 +36,18 @@ import {
 
 import { Link } from 'react-router-dom'
 import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+import NavLink from './NavLink';
 
 const LinkItems = [
-  { name: 'About', icon: FiUser },
-  { name: 'MostLiked', icon: FiAward },
-  { name: 'Musics', icon: FiMusic },
-  { name: 'Liked', icon: FiStar },
-  { name: 'Register', icon: FiEdit }, // si connecté l'un disparait
-  { name: 'Login', icon: FiLogIn }, // si connecté l'un disparait
-  { name: 'LogOut', icon: FiLogOut }, // si connecté l'un disparait
+  { name: 'About', icon: FiUser, route: '/about' },
+  { name: 'MostLiked', icon: FiAward, route: '/top' },
+  { name: 'Musics', icon: FiMusic, route: '/musics' },
+  { name: 'Liked', icon: FiStar, route: '/liked' },
+  { name: 'Register', icon: FiEdit, route: '/register' },
+  { name: 'Login', icon: FiLogIn, route: '/login' },
+  { name: 'LogOut', icon: FiLogOut },
 ]
 
 
@@ -79,19 +82,20 @@ export default function Navbar({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  return (
-    <Box
-      transition="3s ease"
-      bg={useColorModeValue('white', 'gray.900')}
-      borderRight="1px"
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 'full', md: 60 }}
-      pos="fixed"
-      h="full"
-      {...rest}
-    >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <LinkOverlay href='/' >
+  const { isLogged, handleLogout } = useAuth();
+    return (
+      <Box
+        transition="3s ease"
+        bg="white"
+        borderRight="1px"
+        borderRightColor="gray.200"
+        w={{ base: "full", md: 60 }}
+        pos="fixed"
+        h="full"
+        {...rest}
+      >
+        <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           <Image
             borderRadius="full"
             boxSize="75px"
@@ -100,28 +104,47 @@ const SidebarContent = ({ onClose, ...rest }) => {
             marginLeft='45px'
             
           />
-        </LinkOverlay>
-        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
-      </Flex>
-      {LinkItems.map((link) => (
-        <NavItem
-          key={link.name}
-          icon={link.icon}
-          to={`/${link.name.toLowerCase()}`}
-        >
-          {link.name}
-        </NavItem>
-      ))}
-    </Box>
-  )
+          </Text>
+          <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        </Flex>
+        {LinkItems.map((link, i) => {
+        if ((link.name === 'Login' || link.name === 'Register') && isLogged) return null;
+        if (link.name === 'LogOut' && !isLogged) return null;
+        return <NavLink key={i} link={link} />;
+      })}
+      </Box>
+    );
 }
 
-const NavItem = ({ icon, children, to, ...rest }) => {
+const NavItem = ({ icon, children, to,onClick, ...rest }) => {
+
+  // Si l'élément est "LogOut", utilisez un gestionnaire de clic au lieu d'un lien de navigation
+  if (children === 'LogOut') {
+    return (
+      <Flex
+        align="center"
+        p="4"
+        mx="4"
+        borderRadius="lg"
+        role="group"
+        cursor="pointer"
+        _hover={{
+          bg: 'green.400',
+          color: 'white',
+        }}
+        onClick={onClick}
+        {...rest}
+      >
+        {icon && <Icon mr="4" fontSize="16" as={icon} />}
+        {children}
+      </Flex>
+    );
+  }
   return (
     <Link
       to={to}
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}
+      {...rest}      
     >
       <Flex
         align="center"
@@ -134,7 +157,6 @@ const NavItem = ({ icon, children, to, ...rest }) => {
           bg: 'green.400',
           color: 'white',
         }}
-        {...rest}
       >
         {icon && (
           <Icon
@@ -153,6 +175,11 @@ const NavItem = ({ icon, children, to, ...rest }) => {
 }
 
 const MobileNav = ({ onOpen, ...rest }) => {
+  const { currentUser, handleLogout, isLogged } = useAuth(); // Utilisation du contexte d'authentification
+  const navigate = useNavigate();
+  const logoutAndRedirect = () => {
+    handleLogout(() => navigate('/login'));
+  };
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -203,9 +230,9 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{currentUser ? currentUser.username : 'Guest'}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {currentUser ? 'Admin' : 'Visitor'}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
@@ -220,8 +247,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
+              {!isLogged && (
+              <Link to="/login">
+                <MenuItem>Login</MenuItem>
+              </Link>
+              )}
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              {isLogged && (
+                <MenuItem onClick={logoutAndRedirect}>Sign out</MenuItem> // Bouton de déconnexion
+              )}
             </MenuList>
           </Menu>
         </Flex>
