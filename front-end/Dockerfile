@@ -2,14 +2,14 @@
 FROM node:14
 
 # Définition du répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /frontend
 
 # Copie du fichier des dépendances npm et installation
-COPY package.json package-lock.json /app/
+COPY package.json package-lock.json /frontend/
 RUN npm install
 
 # Copie du reste du code frontend
-COPY . /app/front-end
+COPY . /frontend
 
 # Exposition du port sur lequel l'application React écoute
 EXPOSE 3000
