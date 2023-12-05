@@ -11,28 +11,35 @@ import Footer from './Footer'
 import Login from './Login'
 import Home from './Home'
 import About from './About'
-
-const isLogged = false
+import { useAuth } from './AuthContext' // importez useAuth
 
 function App() {
+  const { isLogged } = useAuth();
   return (
     <>
       <Router>
         <Navbar />
         <Routes>
           {isLogged ? (
-            <Route path="/" element={<Home />} />
+            <>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              {/* Ajoutez d'autres routes nécessitant une authentification ici */}
+            </>
           ) : (
-            <Route path="/" element={<Navigate to="/register" />} />
+            <>
+              <Route path="/" element={<Navigate to="/register" />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              {/* Ajoutez d'autres routes publiques ici */}
+            </>
           )}
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
         </Routes>
         <Footer />
       </Router>
     </>
-  )
+  );
 }
+
 
 export default App

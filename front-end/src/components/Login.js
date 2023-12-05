@@ -12,8 +12,49 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import axios from 'axios';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
+import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from './AuthContext';
+import { useEffect } from 'react';
 
 export default function Login() {
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
+const navigate = useNavigate();
+const toast = useToast();
+const { handleLogin, isLogged } = useAuth(); 
+
+
+const handleLoginClick = async () => {
+  try {
+    const response = await axios.post('http://localhost:8000/api/token/', {
+      username: username,
+      password: password,
+    });
+
+    if (response.data.access) {
+      await handleLogin({ username, password }); // Enregistrez le token et d'autres informations nécessaires
+      navigate('/home');
+    }
+  } catch (error) {
+    toast({
+      title: 'Erreur de connexion',
+      description: error.response.data.detail,
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
+useEffect(() => {
+  if (isLogged) {
+    navigate('/home');
+  }
+}, [isLogged, navigate]);
   return (
     <Flex
       minH={'100vh'}
@@ -33,13 +74,13 @@ export default function Login() {
           boxShadow={'lg'}
           p={8}>
           <Stack spacing={4}>
-            <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+            <FormControl id="username">
+              <FormLabel>Username</FormLabel>
+              <Input type="username" value={username} onChange={e => setUsername(e.target.value)} />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} />
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -54,7 +95,9 @@ export default function Login() {
                 color={'white'}
                 _hover={{
                   bg: 'blue.500',
-                }}>
+                }}
+                onClick={handleLoginClick}
+                >
                 Sign in
               </Button>
             </Stack>

@@ -1,17 +1,17 @@
-# Utilisez une image Python
-FROM python:3.8
+FROM python:3.10.8
 
-# Créez un répertoire de travail
-WORKDIR /app
+WORKDIR /backend
 
-# Copiez le fichier requirements.txt dans l'image
-COPY requirements.txt /app/
+RUN apt-get update && apt-get install -y ffmpeg
+
+COPY requirements.txt .
 
 # Installez les dépendances
-RUN pip install -r requirements.txt
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiez votre application dans l'image
-COPY . /app/
+COPY . .
 
 # Commande par défaut à exécuter lorsque le conteneur démarre
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]
