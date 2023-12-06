@@ -20,20 +20,21 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          {isLogged ? (
-            <>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              {/* Ajoutez d'autres routes nécessitant une authentification ici */}
-            </>
-          ) : (
-            <>
-              <Route path="/" element={<Navigate to="/register" />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              {/* Ajoutez d'autres routes publiques ici */}
-            </>
-          )}
+          <Route path="/" element={isLogged ? <About /> : <Navigate to="/login" />} />
+          {isLogged && (
+          <>
+            <Route path="/about" element={<About />} />
+            {/* Ajoutez d'autres routes nécessitant une authentification ici */}
+          </>
+        )}
+        {!isLogged && (
+          <>
+            <Route path="/home" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            {/* Ajoutez d'autres routes publiques ici */}
+          </>
+        )}
         </Routes>
         <Footer />
       </Router>
