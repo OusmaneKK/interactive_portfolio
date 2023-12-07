@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar />
+        <Navbar>
         <Routes>
           <Route path="/" element={isLogged ? <About /> : <Navigate to="/login" />} />
           {isLogged && (
@@ -37,6 +37,7 @@ function App() {
         )}
         </Routes>
         <Footer />
+        </Navbar>
       </Router>
     </>
   );
