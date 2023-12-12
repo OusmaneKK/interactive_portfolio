@@ -1,17 +1,16 @@
-name: Create Pull Request on Push
+name: 🔓 Checking PR Health
 
-on:
-  push:
-    branches:
-      - feature/*
-      - feat/*
-      - fix/*
-      - fixture/*
-
+on: create
+      
 jobs:
-  create-pull-request:
+  open-pull-request:
+    if: ${{ github.event.ref_type != 'tag' && github.actor != 'dependabot[bot]'}}
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions: 
+        contents: read
+        issues: write
+        pull-requests: write
+        id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,6 +22,7 @@ jobs:
       - name: Create Pull Request
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GHA_PAT }}
           script: |
             const { repo, owner } = context.repo;
             const title = "${{ steps.extract_commit_title.outputs.title }}";
