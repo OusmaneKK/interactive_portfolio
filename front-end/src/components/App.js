@@ -11,6 +11,7 @@ import Footer from './Footer'
 import Login from './Login'
 import Home from './Home'
 import About from './About'
+import NotFoundPage from './NotFound'
 import { useAuth } from './AuthContext' // importez useAuth
 
 function App() {
@@ -20,21 +21,12 @@ function App() {
       <Router>
         <Navbar>
         <Routes>
-          <Route path="/" element={isLogged ? <About /> : <Navigate to="/login" />} />
-          {isLogged && (
-          <>
-            <Route path="/about" element={<About />} />
-            {/* Ajoutez d'autres routes nécessitant une authentification ici */}
-          </>
-        )}
-        {!isLogged && (
-          <>
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            {/* Ajoutez d'autres routes publiques ici */}
-          </>
-        )}
+          <Route path="/" element={isLogged ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/home" element={isLogged ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
         </Navbar>
