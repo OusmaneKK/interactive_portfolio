@@ -1,38 +1,45 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useAuth } from './AuthContext';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { SimpleGrid, Box, Text } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import MusicPlayer from './MusicPlayer';
+import { useAuth } from './AuthContext'; // Assurez-vous que le chemin d'importation est correct
 
-export default function Home() {
-  const { currentUser } = useAuth(); // Utilisation du contexte d'authentification
-  const [music, setMusic] = useState(null);
-  const [error, setError] = useState(null);
-  const musicId = 1; // Remplacez ceci par l'ID de la musique que vous souhaitez obtenir
+const Home = () => {
+  const [musics, setMusics] = useState([]);
+  const { isLogged } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Vérifiez si l'utilisateur est connecté avant de faire une requête
-    if (currentUser) {
-      fetch(`http://localhost:8000/musics/`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-      })
-      .then((response) => {
-        // ... le reste de votre logique de requête ...
-      });
-    } else {
-      setError("Vous devez être connecté pour voir les informations de la musique.");
+    if (!isLogged) {
+      navigate('/login');
+      return;
     }
-  }, [currentUser, musicId]);
+
+    const fetchMusics = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/musics');
+        setMusics(response.data.results); // Utilisez results ici
+      } catch (error) {
+        console.error('Erreur lors de la récupération des musiques:', error);
+        // Gérer l'erreur ici
+      }
+    };
+
+    fetchMusics();
+  }, [isLogged, navigate]);
+
+  if (!isLogged) {
+    return <Box><Text>Vous devez être connecté pour voir cette page.</Text></Box>;
+  }
 
   return (
-    <div>
-      <h1>Home Page</h1>
-      {error ? (
-        <p>Erreur : {error}</p>
-      ) : music ? (
-        <p>Titre de la musique : {music.title}</p>
-      ) : (
-        <p>Chargement...</p>
-      )}
-    </div>
+    <SimpleGrid columns={{ sm: 2, md: 3 }} spacing="8" p="8">
+      {Array.isArray(musics) && musics.map((music) => (
+        <MusicPlayer key={music.id} music={music} />
+      ))}
+    </SimpleGrid>
   );
-}
+};
+
+export default Home;
