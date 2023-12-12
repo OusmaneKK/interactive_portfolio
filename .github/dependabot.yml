@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Configuration pour les dépendances JavaScript (React)
+  - package-ecosystem: "npm"
+    directory: "/front-end" # Chemin vers le répertoire contenant le package.json de React
+    schedule:
+      interval: "weekly" # Fréquence des mises à jour (quotidienne, hebdomadaire, mensuelle)
+
+  # Configuration pour les dépendances Python (Django)
+  - package-ecosystem: "pip"
+    directory: "/backend" # Chemin vers le répertoire contenant le fichier requirements.txt de Django
+    schedule:
+      interval: "weekly" # Fréquence des mises à jour

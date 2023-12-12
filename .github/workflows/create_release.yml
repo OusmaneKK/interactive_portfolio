@@ -1,0 +1,27 @@
+name: 👻 Create Release associated to tag
+
+on: create
+
+jobs:
+  build:
+    if: startsWith(github.ref, 'refs/tags/') && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: echo ${{ github.sha }} > Release.txt
+        
+      - name: Test
+        run: cat Release.txt
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHA_PAT }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ✨ ${{ github.ref }} 
+
+      
