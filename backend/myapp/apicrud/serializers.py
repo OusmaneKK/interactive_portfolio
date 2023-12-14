@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'is_staff', 'is_superuser')
-        
+
 class MusicSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     created = serializers.DateTimeField(read_only=True)
@@ -27,7 +27,7 @@ class MusicSerializer(serializers.Serializer):
     @property
     def like_count(self):
         return self.musiclike_set.count()
-    
+
     def create(self, validated_data):
         audio_file = validated_data.get('audio_file')
 
@@ -41,7 +41,7 @@ class MusicSerializer(serializers.Serializer):
         default_storage.delete(path)
 
         return Music.objects.create(**validated_data)
-    
+
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.duration = validated_data.get('duration', instance.duration)
@@ -51,7 +51,7 @@ class MusicSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-class MusicLikeSerializer(serializers.ModelSerializer): 
+class MusicLikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MusicLike
         fields = ['id', 'user', 'music', 'timestamp']

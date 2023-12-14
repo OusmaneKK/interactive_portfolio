@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
- 
+
 /**
  * NotFoundPage: A React component representing the 404 page.
  */
@@ -16,5 +16,5 @@ const NotFoundPage = () => {
         </Box>
     );
 };
- 
+
 export default NotFoundPage;

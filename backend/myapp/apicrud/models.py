@@ -20,11 +20,11 @@ class Music(models.Model):
     class Meta:
         app_label = 'apicrud'
         ordering = ['created']
-    
+
     @property
     def like_count(self):
         return self.music_likes.count()
-    
+
     def save(self, *args, **kwargs):
         audio = AudioSegment.from_file(self.audio_file.path)
         self.duration = timedelta(milliseconds=len(audio))
