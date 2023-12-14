@@ -25,7 +25,7 @@ const [username, setUsername] = useState('');
 const [password, setPassword] = useState('');
 const navigate = useNavigate();
 const toast = useToast();
-const { handleLogin, isLogged } = useAuth(); 
+const { handleLogin, isLogged } = useAuth();
 const [justLoggedIn, setJustLoggedIn] = useState(false);
 
 

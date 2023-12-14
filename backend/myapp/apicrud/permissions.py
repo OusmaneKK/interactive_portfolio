@@ -14,7 +14,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet.
         return bool(request.user and request.user.is_authenticated)
-    
+
 class IsStaffOrAdmin(permissions.BasePermission):
     """
     Permission personnalisée pour permettre uniquement aux staff et aux admins de modifier la liste.

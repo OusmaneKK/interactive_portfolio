@@ -31,16 +31,16 @@ export const AuthProvider = ({ children }) => {
       });
       localStorage.setItem('access_token', tokenResponse.data.access);
       axios.defaults.headers.common['Authorization'] = `Bearer ${tokenResponse.data.access}`;
-  
+
       const userResponse = await axios.get('http://localhost:8000/users/me');
       const userId = userResponse.data.id;
-  
+
       localStorage.setItem('username', username);
       localStorage.setItem('user_id', userId);
       // Stocker les données utilisateur dans le localStorage et mettre à jour currentUser
       localStorage.setItem('user_data', JSON.stringify(userResponse.data));
       setCurrentUser(userResponse.data);
-  
+
       setIsLogged(true);
       toast({
         title: 'Connexion réussie !',
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('username');
     localStorage.removeItem('user_id');
-    
+
     toast({
       title: 'Déconnexion réussie !',
       description: `A bientôt !`,
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     // Redirection ou autre logique après la déconnexion
     if (redirect) redirect();
   };
-  
+
   const value = {
     currentUser,
     setCurrentUser,
