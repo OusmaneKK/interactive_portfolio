@@ -11,7 +11,7 @@ botocore==1.31.68
 cachetools==5.3.1
 certifi==2023.7.22
 cffi==1.16.0
-charset-normalizer==3.3.1
+charset-normalizer==3.3.2
 click==8.1.7
 clickclick==20.10.2
 connexion==2.14.2
