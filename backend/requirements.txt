@@ -1,4 +1,4 @@
-alembic==1.12.0
+alembic==1.13.0
 apicrud==0.3.6
 asgiref==3.7.2
 async-timeout==4.0.3
