@@ -62,7 +62,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogout = async (redirect) => {
-    // Suppression des informations de l'utilisateur et du token dans le localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('username');
