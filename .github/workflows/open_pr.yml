@@ -1,12 +1,12 @@
-name: 🔓 Checking PR Health
+name: 🔓 Opening New PR
 
 on: create
-      
+
 jobs:
   open-pull-request:
     if: ${{ github.event.ref_type != 'tag' && github.actor != 'dependabot[bot]'}}
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
         contents: read
         issues: write
         pull-requests: write
