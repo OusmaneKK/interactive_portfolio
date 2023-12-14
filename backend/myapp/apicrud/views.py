@@ -69,7 +69,7 @@ class MusicList(generics.ListCreateAPIView):
     def perform_create(self, serializer): ### faudra peut être enlever
         serializer.save(owner=self.request.user)
 
-class MusicDetail(generics.RetrieveUpdateDestroyAPIView): 
+class MusicDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Music.objects.all()
     serializer_class = MusicSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsStaffOrAdmin]

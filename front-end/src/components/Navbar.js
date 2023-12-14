@@ -102,7 +102,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
             src="/logo.png"
             alt="Drogo The Crow"
             marginLeft='45px'
-            
+
           />
           </Text>
           <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
@@ -144,7 +144,7 @@ const NavItem = ({ icon, children, to,onClick, ...rest }) => {
     <Link
       to={to}
       style={{ textDecoration: 'none' }}
-      {...rest}      
+      {...rest}
     >
       <Flex
         align="center"

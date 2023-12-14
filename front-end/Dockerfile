@@ -5,7 +5,7 @@ FROM node:14
 WORKDIR /frontend
 
 # Copie du fichier des dépendances npm et installation
-COPY package.json package-lock.json /frontend/
+COPY package.json package-lock.json* /frontend/
 RUN npm install
 
 # Copie du reste du code frontend

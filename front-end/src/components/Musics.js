@@ -17,9 +17,9 @@ export default function Musics() {
       reviewCount: 34,
       rating: 4,
     }
-  
+
     return (
-      
+
       <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden' marginLeft='20%'>
         <Image src={property.imageUrl} alt={property.imageAlt} />
         <MusicPlayer/>
@@ -39,7 +39,7 @@ export default function Musics() {
               {property.bpm} bpm &bull; {property.key}
             </Box>
           </Box>
-  
+
           <Box
             mt='1'
             fontWeight='semibold'
@@ -49,14 +49,14 @@ export default function Musics() {
           >
             {property.title}
           </Box>
-  
+
           <Box>
             {property.formattedPrice}
             <Box as='span' color='gray.600' fontSize='sm'>
               / mp3 File
             </Box>
           </Box>
-  
+
           <Box display='flex' mt='2' alignItems='center'>
             {Array(5)
               .fill('')

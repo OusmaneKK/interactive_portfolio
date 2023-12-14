@@ -8,7 +8,7 @@ import {
     VisuallyHidden,
   } from '@chakra-ui/react';
   import { FaInstagram, FaSoundcloud, FaYoutube } from 'react-icons/fa';
-  
+
   const SocialButton = ({
     children,
     label,
@@ -35,7 +35,7 @@ import {
       </chakra.button>
     );
   };
-  
+
   export default function Footer() {
     return (
       <Box
@@ -65,4 +65,3 @@ import {
       </Box>
     );
   }
-  

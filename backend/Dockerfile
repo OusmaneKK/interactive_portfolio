@@ -2,7 +2,8 @@ FROM python:3.10.8
 
 WORKDIR /backend
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
