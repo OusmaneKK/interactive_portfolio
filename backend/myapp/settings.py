@@ -10,26 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import configparser
+
+from os.path import join
 from pathlib import Path
 from datetime import timedelta
-from decouple import Config
+from decouple import Config, RepositoryEnv
+from configparser import RawConfigParser
 
-config = Config(".env")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+config = configparser.RawConfigParser()
+config.read(os.path.join(BASE_DIR, 'settings.ini'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY') or config['DEFAULT']['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -43,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'myapp.apicrud',
+    'myapp.apicrud.apps.ApicrudConfig',
 ]
 
 MIDDLEWARE = [
@@ -83,21 +88,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myapp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': config('SQL_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', config.get('DATABASE_TEST', 'DB_NAME', fallback='default_db_name')),
+        'USER': os.environ.get('DB_USER', config.get('DATABASE_TEST', 'DB_USER', fallback='default_user')),
+        'PASSWORD': os.environ.get('DB_PASSWORD', config.get('DATABASE_TEST', 'DB_PASSWORD', fallback='default_password')),
+        'HOST': os.environ.get('DB_HOST', config.get('DATABASE_TEST', 'DB_HOST', fallback='localhost')),
+        'PORT': os.environ.get('DB_PORT', config.get('DATABASE_TEST', 'DB_PORT', fallback='5432')),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -136,8 +138,6 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -152,15 +152,19 @@ REST_FRAMEWORK = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+MIGRATION_MODULES = {
+    'apicrud': 'myapp.apicrud.migrations',
+}
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": config('SIGNING_KEY'),
+    "SIGNING_KEY": os.environ.get('SIGNING_KEY', config.get('DEFAULT', 'SIGNING_KEY', fallback='azerty')),
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,

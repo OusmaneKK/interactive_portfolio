@@ -5,14 +5,22 @@ WORKDIR /backend
 RUN apt-get update && apt-get install -y ffmpeg --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+RUN pip install poetry
 
-# Installez les dépendances
+COPY pyproject.toml /backend/
+COPY poetry.lock /backend/
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-dev --no-interaction --no-ansi
 
-# Copiez votre application dans l'image
-COPY . .
+RUN useradd --create-home appuser \
+    && chown -R appuser:appuser /backend
 
-# Commande par défaut à exécuter lorsque le conteneur démarre
+USER appuser
+
+COPY manage.py /backend/
+COPY myapp /backend/myapp/
+COPY tox.ini /backend/
+COPY media /backend/
+
 CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]
