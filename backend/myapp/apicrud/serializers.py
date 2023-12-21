@@ -1,12 +1,12 @@
 from datetime import timedelta
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from pydub import AudioSegment
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Music, MusicLike
+from pydub import AudioSegment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,6 +39,10 @@ class MusicSerializer(serializers.Serializer):
 
         # Supprimez le fichier temporaire si nécessaire
         default_storage.delete(path)
+
+        owner = self.context['request'].user
+        validated_data['owner'] = owner
+
 
         return Music.objects.create(**validated_data)
 

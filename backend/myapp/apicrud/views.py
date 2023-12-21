@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -25,6 +26,18 @@ from myapp.apicrud.permissions import IsStaffOrAdmin
 from myapp.apicrud.serializers import MusicSerializer
 from myapp.apicrud.serializers import UserSerializer
 from .models import Music, MusicLike
+
+
+class HomeView(generics.ListAPIView):
+    queryset = Music.objects.all()
+    serializer_class = MusicSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class MusicCreateView(generics.CreateAPIView):
+    queryset = Music.objects.all()
+    serializer_class = MusicSerializer
+    permission_classes = [IsAdminUser]
 
 class UserList(generics.ListAPIView):
     """
@@ -66,7 +79,9 @@ class MusicList(generics.ListCreateAPIView):
     serializer_class = MusicSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer): ### faudra peut être enlever
+    def perform_create(self, serializer):
+        if not self.request.user.is_staff:
+            raise PermissionDenied("Seuls les administrateurs peuvent créer de la musique.")
         serializer.save(owner=self.request.user)
 
 class MusicDetail(generics.RetrieveUpdateDestroyAPIView):

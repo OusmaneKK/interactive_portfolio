@@ -1,8 +1,10 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from myapp.apicrud import views
+from .views import HomeView
 
 urlpatterns = [
+    path('home/', HomeView.as_view(), name='home'),
     path('musics/', views.MusicList.as_view()),
     path('musics/<int:pk>/', views.MusicDetail.as_view()),
     path('users/', views.UserList.as_view()),
