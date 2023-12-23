@@ -27,6 +27,7 @@ import {
   FiStar,
   FiMenu,
   FiBell,
+  FiHome,
   FiChevronDown,
   FiLogIn,
   FiLogOut,
@@ -41,13 +42,10 @@ import { useNavigate } from 'react-router-dom';
 import NavLink from './NavLink';
 
 const LinkItems = [
+  { name: 'Home', icon: FiHome, route: '/home' },
   { name: 'About', icon: FiUser, route: '/about' },
-  { name: 'MostLiked', icon: FiAward, route: '/top' },
-  { name: 'Musics', icon: FiMusic, route: '/musics' },
-  { name: 'Liked', icon: FiStar, route: '/liked' },
   { name: 'Register', icon: FiEdit, route: '/register' },
   { name: 'Login', icon: FiLogIn, route: '/login' },
-  { name: 'LogOut', icon: FiLogOut },
 ]
 
 
