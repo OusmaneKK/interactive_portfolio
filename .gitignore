@@ -3,3 +3,10 @@ __pycache__
 */env
 /frontend
 .DS_Store
+!migrations/__init__.py
+.vscode
+**/settings.ini
+backend/media/media
+backend/media/music_audio
+backend/media/music_images
+.tox

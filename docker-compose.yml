@@ -23,7 +23,8 @@ services:
       - ./backend:/code/backend
       - ./backend/media:/code/media
       - ./front-end/public:/code/frontend
-
+    networks:
+      - djangonetwork
   nginx:
     build: ./nginx
     ports:
@@ -42,6 +43,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - djangonetwork
 
   db:
     image: postgres:latest
@@ -49,9 +52,16 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    networks:
+      - djangonetwork
 volumes:
   postgres_data:
   media_volume:
+
+networks:
+    djangonetwork:
+        driver: bridge
