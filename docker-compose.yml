@@ -20,9 +20,9 @@ services:
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
       DEBUG: "true"
     volumes:
-      - ./backend:/code/backend
-      - ./backend/media:/code/media
-      - ./front-end/public:/code/frontend
+      - ./backend:/backend
+      - ./backend/media:/backend/media
+      - ./front-end/public:/frontend
     networks:
       - djangonetwork
   nginx:

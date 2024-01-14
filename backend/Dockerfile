@@ -13,7 +13,8 @@ COPY poetry.lock /backend/
 RUN poetry config virtualenvs.create false \
     && poetry install --no-dev --no-interaction --no-ansi
 
-RUN useradd --create-home appuser \
+RUN useradd --create-home appuser
+RUN mkdir -p /backend/media \
     && chown -R appuser:appuser /backend
 
 USER appuser
@@ -21,6 +22,5 @@ USER appuser
 COPY manage.py /backend/
 COPY myapp /backend/myapp/
 COPY tox.ini /backend/
-COPY media /backend/
 
 CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]
