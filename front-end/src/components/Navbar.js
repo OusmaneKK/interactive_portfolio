@@ -33,6 +33,7 @@ import {
   FiLogOut,
   FiEdit,
   FiUser,
+  FiTool
 } from 'react-icons/fi'
 
 import { Link } from 'react-router-dom'
@@ -43,6 +44,7 @@ import NavLink from './NavLink';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, route: '/home' },
+  { name: 'Admin', icon: FiTool, route: '/admin' },
   { name: 'About', icon: FiUser, route: '/about' },
   { name: 'Register', icon: FiEdit, route: '/register' },
   { name: 'Login', icon: FiLogIn, route: '/login' },

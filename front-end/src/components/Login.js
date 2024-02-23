@@ -46,11 +46,23 @@ const handleLoginClick = async () => {
 };
 
 useEffect(() => {
-  if (justLoggedIn) {
-    navigate('/home', { replace: true });
-    setJustLoggedIn(false);
-  }
+  const checkUserRole = async () => {
+    if (justLoggedIn) {
+      const userData = JSON.parse(localStorage.getItem('user_data'));
+
+      if (userData?.is_superuser || userData?.is_staff) {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
+
+      setJustLoggedIn(false);
+    }
+  };
+
+  checkUserRole();
 }, [justLoggedIn, navigate]);
+
   return (
     <Flex
       minH={'100vh'}

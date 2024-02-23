@@ -33,6 +33,8 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${tokenResponse.data.access}`;
 
       const userResponse = await axios.get('http://localhost:8000/users/me');
+      localStorage.setItem('user_data', JSON.stringify(userResponse.data));
+      setCurrentUser(userResponse.data);
       const userId = userResponse.data.id;
 
       localStorage.setItem('username', username);

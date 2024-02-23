@@ -81,7 +81,7 @@ class MusicList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        if not self.request.user.is_staff:
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
             raise PermissionDenied("Seuls les administrateurs peuvent créer de la musique.")
         serializer.save(owner=self.request.user)
 

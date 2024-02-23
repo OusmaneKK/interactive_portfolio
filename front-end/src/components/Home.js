@@ -13,23 +13,24 @@ const Home = () => {
   const { isLogged } = useAuth();
   const navigate = useNavigate();
 
+  const fetchMusics = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/musics');
+      setMusics(response.data.results);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des musiques:', error);
+    }
+  };
+
   useEffect(() => {
     if (!isLogged) {
       navigate('/login');
       return;
     }
 
-    const fetchMusics = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/musics');
-        setMusics(response.data.results);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des musiques:', error);
-      }
-    };
-
     fetchMusics();
   }, [isLogged, navigate]);
+
 
   const playMusic = (music) => {
     console.log("Playing music: ", music.title);
