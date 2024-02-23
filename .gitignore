@@ -10,3 +10,4 @@ backend/media/media
 backend/media/music_audio
 backend/media/music_images
 .tox
+.coverage
