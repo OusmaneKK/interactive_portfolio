@@ -28,7 +28,6 @@ from myapp.apicrud.serializers import MusicSerializer
 from myapp.apicrud.serializers import UserSerializer
 from .models import Music, MusicLike
 
-
 class HomeView(generics.ListAPIView):
     queryset = Music.objects.all()
     serializer_class = MusicSerializer
@@ -142,3 +141,16 @@ class UserRegister(generics.CreateAPIView):
 
         user = User.objects.create_user(username=username, email=email, password=password, is_staff=False, is_superuser=False)
         return Response({'success': 'User created successfully'}, status=status.HTTP_201_CREATED)
+
+@require_POST
+def check_email(request):
+    import json
+
+    data = json.loads(request.body)
+    email = data.get('email')
+
+    # Vérifiez si un utilisateur avec cet e-mail existe déjà
+    user_exists = User.objects.filter(email=email).exists()
+
+    # Renvoyez une réponse indiquant si l'email est unique ou non
+    return JsonResponse({'isUnique': not user_exists})
