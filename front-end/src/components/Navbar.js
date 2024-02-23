@@ -82,7 +82,7 @@ export default function Navbar({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  const { isLogged, handleLogout } = useAuth();
+  const { isLogged, currentUser } = useAuth();
     return (
       <Box
         transition="3s ease"
@@ -108,8 +108,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
           <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
         </Flex>
         {LinkItems.map((link, i) => {
+        if (link.name === 'Admin' && (!isLogged || (!currentUser.is_superuser && !currentUser.is_staff))) return null;
         if ((link.name === 'Login' || link.name === 'Register') && isLogged) return null;
-        if (link.name === 'LogOut' && !isLogged) return null;
         return <NavLink key={i} link={link} />;
       })}
       </Box>
