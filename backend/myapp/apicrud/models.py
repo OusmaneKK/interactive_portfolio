@@ -28,11 +28,7 @@ class Music(models.Model):
     def save(self, *args, **kwargs):
         audio = AudioSegment.from_file(self.audio_file.path)
         self.duration = timedelta(milliseconds=len(audio))
-        if self.id is None:
-            super().save(*args, **kwargs)  # Save once to generate ID if it doesn't exist
-        else:
-            super().save(*args, **kwargs)  # Regular save for updates
-
+        super().save(*args, **kwargs)
 
 class MusicLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

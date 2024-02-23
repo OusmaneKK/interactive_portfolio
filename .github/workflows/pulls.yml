@@ -139,7 +139,7 @@ jobs:
             -Dsonar.organization=drogobeats
             -Dsonar.python.coverage.reportPaths=./backend/coverage.xml
             -Dsonar.python.version=3.10
-            -Dsonar.test.exclusions=**/migrations/**,**/settings.py,myapp/tests/**
+            -Dsonar.test.exclusions=**/migrations/**,**/settings.py,myapp/tests/**,**/tests/**
             -Dsonar.exclusions=**/__init__.py,**/*.pyc
 
 
@@ -166,4 +166,6 @@ jobs:
             DB_PORT: 5432
             DJANGO_ALLOWED_HOSTS: '0.0.0.0'
             ALLOWED_HOSTS: '0.0.0.0'
+            EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+            EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         run: docker-compose build

@@ -9,9 +9,11 @@ const AdminPage = () => {
     const { isLogged } = useAuth();
     const toast = useToast();
     const [musics, setMusics] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         fetchMusics();
+        fetchUsers();
     }, []);
 
     const fetchMusics = async () => {
@@ -19,7 +21,7 @@ const AdminPage = () => {
           const response = await axios.get('http://localhost:8000/musics/', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
           });
-          setMusics(response.data); // Ici, vous définissez tout l'objet, pas seulement les résultats
+          setMusics(response.data);
         } catch (error) {
           console.error("Error fetching musics:", error);
           toast({
@@ -30,7 +32,25 @@ const AdminPage = () => {
             isClosable: true,
           });
         }
-      };
+    };
+
+    const fetchUsers = async () => {
+        try {
+          const response = await axios.get('http://localhost:8000/users/', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+          });
+          setUsers(response.data);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+          toast({
+            title: "Fetching Failed",
+            description: "Failed to fetch users.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+    };
 
     const handleAddMusic = async (formData) => {
         if (!isLogged) {
@@ -58,7 +78,7 @@ const AdminPage = () => {
                 duration: 5000,
                 isClosable: true,
             });
-            fetchMusics(); // Rafraîchit la liste des musiques après l'ajout
+            fetchMusics();
         } catch (error) {
             console.error("Error adding music:", error);
             toast({
@@ -94,7 +114,7 @@ const AdminPage = () => {
             duration: 5000,
             isClosable: true,
           });
-          fetchMusics(); // Rafraîchir la liste des musiques après la suppression
+          fetchMusics();
         } catch (error) {
           console.error("Error deleting music:", error);
           toast({
@@ -105,16 +125,49 @@ const AdminPage = () => {
             isClosable: true,
           });
         }
-      };
+    };
 
-      useEffect(() => {
-        fetchMusics();
-      }, []);
+    const handleDeleteUser = async (userId) => {
+        if (!isLogged) {
+          toast({
+            title: "Authentication Required",
+            description: "You must be logged in to delete user.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+
+        try {
+          await axios.delete(`http://localhost:8000/users/${userId}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+          });
+          toast({
+            title: "User Deleted",
+            description: "The user has been successfully deleted.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          fetchUsers();
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          toast({
+            title: "Deletion Failed",
+            description: "Failed to delete user.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+    };
 
     return (
         <div>
           <h1>Admin Page</h1>
           <AddMusicForm onAddMusic={handleAddMusic} />
+          <h2>Music List</h2>
           <Table variant="simple">
             <Thead>
               <Tr>
@@ -130,6 +183,29 @@ const AdminPage = () => {
                 <Td>{music.title}</Td>
                 <Td>
                     <Button colorScheme="red" onClick={() => handleDeleteMusic(music.id)}>
+                    Delete
+                    </Button>
+                </Td>
+                </Tr>
+            ))}
+            </Tbody>
+          </Table>
+          <h2>User List</h2>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>ID</Th>
+                <Th>Username</Th>
+                <Th>Action</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+            {users.results && users.results.map((user) => (
+                <Tr key={user.id}>
+                <Td>{user.id}</Td>
+                <Td>{user.username}</Td>
+                <Td>
+                    <Button colorScheme="red" onClick={() => handleDeleteUser(user.id)}>
                     Delete
                     </Button>
                 </Td>

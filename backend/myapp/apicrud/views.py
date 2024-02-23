@@ -6,11 +6,19 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes
 from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth import get_user_model
+
 
 from rest_framework import generics
 from rest_framework import permissions
@@ -20,13 +28,31 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
 
 from myapp.apicrud.permissions import IsStaffOrAdmin
 from myapp.apicrud.serializers import MusicSerializer
 from myapp.apicrud.serializers import UserSerializer
 from .models import Music, MusicLike
+from django.conf import settings
+from django.core.mail import send_mail
+
+
+
+User = get_user_model()
+
+@require_http_methods(["GET"])
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'token is invalid'})
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return JsonResponse({'status': 'invalid link'})
 
 class HomeView(generics.ListAPIView):
     queryset = Music.objects.all()
@@ -62,7 +88,11 @@ class UserList(generics.ListAPIView):
 
         user = User.objects.create_user(username=username, email=email, password=password)
         return Response({'success': 'User created successfully'}, status=status.HTTP_201_CREATED)
-class UserDetail(generics.ListAPIView):
+
+class UserDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated & IsAdminUser]
@@ -80,7 +110,7 @@ class MusicList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        if not (self.request.user.is_staff or self.request.user.is_superuser):
+        if not self.request.user.is_staff:
             raise PermissionDenied("Seuls les administrateurs peuvent créer de la musique.")
         serializer.save(owner=self.request.user)
 
@@ -105,17 +135,19 @@ def like_music(request, music_id):
 def send_verification_email(user, request):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
+    site = get_current_site(request)
     mail_subject = 'Activate your account.'
     message = render_to_string('acc_active_email.html', {
         'user': user,
-        'domain': request.META['HTTP_HOST'],
+        'domain': site.domain,
         'uid': uid,
         'token': token,
     })
-    to_email = user.email
-    email = EmailMessage(mail_subject, message, to=[to_email])
-    email.send()
 
+    email = EmailMessage(
+        mail_subject, message, to=[user.email]
+    )
+    email.send()
 
 class UserRegister(generics.CreateAPIView):
     """
@@ -123,7 +155,7 @@ class UserRegister(generics.CreateAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]  # Ici, nous utilisons AllowAny pour permettre aux utilisateurs non authentifiés de s'inscrire
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '')
@@ -140,17 +172,18 @@ class UserRegister(generics.CreateAPIView):
             return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, email=email, password=password, is_staff=False, is_superuser=False)
-        return Response({'success': 'User created successfully'}, status=status.HTTP_201_CREATED)
+
+        send_verification_email(user, request)
+
+        return Response({'success': 'User created successfully, please check your email to activate your account'}, status=status.HTTP_201_CREATED)
 
 @require_POST
 def check_email(request):
-    import json
-
-    data = json.loads(request.body)
-    email = data.get('email')
-
-    # Vérifiez si un utilisateur avec cet e-mail existe déjà
+    email = request.data.get('email')
     user_exists = User.objects.filter(email=email).exists()
-
-    # Renvoyez une réponse indiquant si l'email est unique ou non
     return JsonResponse({'isUnique': not user_exists})
+
+class UserDeleteView(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    lookup_field = 'pk'  # or 'username' if you want to lookup by username
+    permission_classes = [permissions.IsAdminUser]
