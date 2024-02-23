@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
-
+import { jwtDecode } from 'jwt-decode'; // Utilisation d'une importation nommée
 
 const AuthContext = createContext();
 
@@ -21,6 +21,31 @@ export const AuthProvider = ({ children }) => {
       delete axios.defaults.headers.common['Authorization'];
     }
   }, [isLogged]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        try {
+            const decodedToken = jwtDecode(token); // Utilisation de l'importation nommée
+            const currentTime = Date.now() / 1000;
+            if (decodedToken.exp < currentTime) {
+                handleLogout(); // Déconnexion automatique
+                toast({
+                    title: 'Session expirée',
+                    description: 'Votre session a expiré. Veuillez vous reconnecter.',
+                    status: 'warning',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            }
+        } catch (error) {
+            console.error("Error decoding token:", error);
+        }
+    } else {
+        delete axios.defaults.headers.common['Authorization'];
+    }
+}, [isLogged]); // Ajoutez d'autres dépendances si nécessaire
 
   const handleLogin = async (data) => {
     const { username, password } = data;
