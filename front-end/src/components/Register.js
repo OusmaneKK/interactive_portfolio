@@ -14,7 +14,7 @@ import {
   useColorModeValue,
   Link,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import axios from 'axios';
@@ -27,17 +27,49 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isEmailUnique, setIsEmailUnique] = useState(true);
   const [groups, setGroups] = useState('')
   const navigate = useNavigate();
   const toast = useToast()
 
-  const handleSubmit = async () => {
+  const checkEmailUniqueness = async (email) => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/check-email', { email });
+      if (response.data.isUnique) {
+        setIsEmailUnique(response.data.isUnique);
+      } else {
+        setIsEmailUnique(false);
+        toast({
+          title: 'E-mail déjà utilisé',
+          description: "L'adresse e-mail est déjà associée à un compte.",
+          status: 'warning',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'e-mail :', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isEmailUnique) {
+      toast({
+        title: 'Email verification failed',
+        description: 'Please use a different email address.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
     if (password !== confirmPassword) {
       console.error('Passwords do not match');
       return;
     }
     try {
-      const response = await axios.post('http://localhost:8000/register/', {  // Remplacez '/api/register/' par l'URL d'inscription de votre backend
+      const response = await axios.post('http://localhost:8000/register/', {
       username: username,
       email: email,
       password: password,
@@ -65,6 +97,13 @@ export default function Register() {
       })
     }
   };
+
+  useEffect(() => {
+    if (email) {
+      checkEmailUniqueness(email);
+    }
+  }, [email]);
+
 
   return (
     <>
