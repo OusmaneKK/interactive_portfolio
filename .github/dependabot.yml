@@ -10,6 +10,8 @@ updates:
     directory: "/front-end"
     schedule:
       interval: "weekly"
+    registries:
+      - registry: github-octocat
 
   - package-ecosystem: "pip"
     directory: "/backend"
