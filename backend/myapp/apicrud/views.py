@@ -32,7 +32,8 @@ from rest_framework.response import Response
 from myapp.apicrud.permissions import IsStaffOrAdmin
 from myapp.apicrud.serializers import MusicSerializer
 from myapp.apicrud.serializers import UserSerializer
-from .models import Music, MusicLike
+from myapp.apicrud.serializers import AchievementsSerializer
+from .models import Music, MusicLike, Achievements
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -59,6 +60,26 @@ class HomeView(generics.ListAPIView):
     serializer_class = MusicSerializer
     permission_classes = [IsAuthenticated]
 
+class AchievementsList(generics.ListAPIView):
+    queryset = Achievements.objects.all()
+    serializer_class = AchievementsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        title = request.data.get('title', '')
+        description = request.data.get('description', '')
+        image = request.data.get('image', '')
+
+        if not title or not description or not image:
+            return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        achievement = Achievements.objects.create(user=user, title=title, description=description, image=image)
+        return Response({'success': 'Achievement created successfully'}, status=status.HTTP_201_CREATED)
+
+class AchievementsDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Achievements.objects.all()
+    serializer_class = AchievementsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsStaffOrAdmin]
 
 class MusicCreateView(generics.CreateAPIView):
     queryset = Music.objects.all()

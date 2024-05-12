@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from myapp.apicrud import views
-from .views import HomeView, UserDeleteView
+from .views import HomeView, UserDeleteView, AchievementsList, AchievementsDetail
 
 urlpatterns = [
     path('home/', HomeView.as_view(), name='home'),
@@ -15,6 +15,8 @@ urlpatterns = [
     path('register/', views.UserRegister.as_view(), name='user-register'),
     path('api/check-email', views.check_email, name='check_email'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    path('achievements', views.AchievementsList.as_view(), name='achievements-list'),
+    path('achievements/<int:pk>/', views.AchievementsDetail.as_view(), name='achievements-detail'),
 
 
 ]

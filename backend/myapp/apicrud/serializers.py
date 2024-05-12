@@ -5,7 +5,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import Music, MusicLike
+from .models import Music, MusicLike, Achievements
 from pydub import AudioSegment
 
 class UserSerializer(serializers.ModelSerializer):
@@ -67,3 +67,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['user_id'] = user.id
 
         return token
+
+class AchievementsSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    title = serializers.CharField(max_length=100)
+    description = serializers.CharField()
+    image = serializers.ImageField()
+    timestamp = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        return Achievements.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance

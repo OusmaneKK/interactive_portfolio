@@ -38,3 +38,15 @@ class MusicLike(models.Model):
     class Meta:
         app_label = 'apicrud'
         unique_together = ('user', 'music')
+
+
+class Achievements(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='achievements_images/')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'apicrud'
+        ordering = ['-timestamp']
