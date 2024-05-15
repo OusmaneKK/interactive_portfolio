@@ -1,18 +1,21 @@
-# Utilisez une image de base appropriée pour Node.js
-FROM node:14
+# Étape de construction
+FROM node:14 as build
 
-# Définition du répertoire de travail dans le conteneur
 WORKDIR /frontend
 
-# Copie du fichier des dépendances npm et installation
-COPY package.json package-lock.json* /frontend/
+COPY package*.json ./
 RUN npm install
+RUN npm install serve
 
-# Copie du reste du code frontend
-COPY . /frontend
+COPY . .
+RUN npm run build
 
-# Exposition du port sur lequel l'application React écoute
-EXPOSE 3000
+# Étape de production
+FROM node:14-alpine
 
-# Commande de démarrage de l'application React
-CMD ["npm", "start"]
+WORKDIR /app
+
+COPY --from=build /frontend/build /app
+COPY --from=build /frontend/node_modules /app/node_modules
+
+CMD ["./node_modules/.bin/serve", "-s", "."]

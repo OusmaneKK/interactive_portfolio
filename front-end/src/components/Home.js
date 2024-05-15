@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SimpleGrid, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import MusicPlayer from './MusicPlayer';
-import AudioPlayer from './AudioPlayer'; // Assurez-vous que l'importation est correcte
+import AudioPlayer from './AudioPlayer';
 import { useAuth } from './AuthContext';
 
 const Home = () => {

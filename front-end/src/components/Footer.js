@@ -7,7 +7,7 @@ import {
     useColorModeValue,
     VisuallyHidden,
   } from '@chakra-ui/react';
-  import { FaInstagram, FaSoundcloud, FaYoutube } from 'react-icons/fa';
+  import { FaGithub, FaInstagram, FaSoundcloud, FaYoutube } from 'react-icons/fa';
 
   const SocialButton = ({
     children,
@@ -49,7 +49,7 @@ import {
           spacing={4}
           justify={{ base: 'center', md: 'space-between' }}
           align={{ base: 'center', md: 'center' }}>
-          <Text>© 2022 Chakra Templates. All rights reserved</Text>
+          <Text>© 2024 Ousmane KONATE. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
             <SocialButton label={'Soundcloud'} href={'https://soundcloud.com/drogothecrow'}>
               <FaSoundcloud />
@@ -59,6 +59,9 @@ import {
             </SocialButton>
             <SocialButton label={'Instagram'} href={'https://www.instagram.com/drogothecrow/'}>
               <FaInstagram />
+            </SocialButton>
+            <SocialButton label={'Github'} href={'https://github.com/OusmaneKK'}>
+              <FaGithub />
             </SocialButton>
           </Stack>
         </Container>

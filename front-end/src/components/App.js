@@ -5,12 +5,14 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom'
+import Achievements from './Achievements'; // Importez votre page d'administration
 import Register from './Register'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import Login from './Login'
 import Home from './Home'
 import About from './About'
+import Skills from './Skills'
 import NotFoundPage from './NotFound'
 import { useAuth } from './AuthContext' // importez useAuth
 import AdminPage from './AdminPage'; // Importez votre page d'administration
@@ -30,6 +32,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path='/achievements' element={<Achievements />} />
+          <Route path='/skills' element={<Skills />} />
           {/* Utilisez isSuperuser pour protéger la route /admin */}
           <Route path="/admin" element={isLogged && isSuperuser ? <AdminPage /> : <Navigate to="/login" />} />
           <Route path="*" element={<NotFoundPage />} />

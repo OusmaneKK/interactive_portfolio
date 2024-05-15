@@ -31,9 +31,8 @@ const [justLoggedIn, setJustLoggedIn] = useState(false);
 
 const handleLoginClick = async () => {
   try {
-    // Appel direct à handleLogin du contexte d'authentification
     await handleLogin({ username, password });
-    setJustLoggedIn(true); // Marquer que l'utilisateur vient de se connecter
+    setJustLoggedIn(true);
   } catch (error) {
     toast({
       title: 'Erreur de connexion',
